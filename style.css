@@ -1,0 +1,52 @@
+html {
+  overflow-y: scroll;
+  height: 100%;
+  font-size: 16px;
+  color: #fff;
+}
+body {
+  height: 100%;
+  margin: 0;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.hbox {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.vbox {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.vbox-compact {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+}
+
+#root {
+  height: 100%;
+  width: 100%;
+}
+
+#nav {
+  width: 20em;
+  height: 100%;
+  background: #000;
+  border: 2px solid #fff;
+}
+
+#layout {
+  height: 100%;
+  width: 100%;
+}
