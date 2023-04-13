@@ -1,7 +1,7 @@
 html {
   overflow-y: scroll;
   height: 100%;
-  font-size: 16px;
+  font-size: 12px;
   color: #fff;
 }
 body {
@@ -13,25 +13,9 @@ body {
   box-sizing: border-box;
 }
 
-.hbox {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.vbox {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.vbox-compact {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: flex-start;
+.acc-text {
+  color: #56c8ff;
+  font-weight: bold;
 }
 
 #root {
@@ -53,12 +37,22 @@ body {
 
 #sidebar {
   background: #000;
-  border: #fff solid 1px;
+  border-right: #cccccc solid 1px;
   width: 200px;
   height: 100%;
 }
 
 .sidebar-item[data-selected="false"]::before {
+  content: "";
+  display: inline-block;
+  width: 0.3em;
+  height: 0.3em;
+  border-radius: 50%;
+  background-color: #000;
+  border: 1px solid #56c8ff;
+  margin-left: 2px;
+  margin-right: 2px;
+  vertical-align: middle;
 }
 
 .sidebar-item[data-selected="true"]::before {
@@ -68,6 +62,7 @@ body {
   height: 0.3em;
   border-radius: 50%;
   background-color: #56c8ff;
+  border: 1px solid #56c8ff;
   margin-left: 2px;
   margin-right: 2px;
   vertical-align: middle;
@@ -80,49 +75,82 @@ body {
   overflow: scroll;
 }
 
-/* Define styles for the grid items */
 .window {
+  position: relative;
   background-color: #000;
   border: 1px solid #cccccc;
   border-radius: 3px;
-  box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.15);
-
-  overflow: scroll;  padding: 16px;
+  overflow: hidden;
 }
 
-/* Define styles for the remove button */
-.layout div button {
-  background-color: #ff6666;
-  color: #ffffff;
-  border: none;
-  border-radius: 3px;
-  padding: 8px;
-  cursor: pointer;
-  margin-top: 8px;
+.window-bar {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background-color: #000;
+  border-bottom: 1px solid #cccccc;
+  cursor: move;
 }
 
-/* Define styles for the window title */
-.layout div span {
-  font-size: 20px;
-  font-weight: bold;
-  display: block;
-  margin-bottom: 16px;
+.window-bar button {
+  height: 24px;
+  width: 24px;
 }
 
-/* Define styles for the draggable handle */
+.window-content {
+  width: 100%;
+  height: 100%;
+  overflow: scroll;
+  padding: 12px;
+}
+
 .layout div .react-resizable-handle {
   position: absolute;
-  width: 20px;
-  height: 20px;
+  width: 24px;
+  height: 24px;
   bottom: 0;
   right: 0;
+  z-index: 2;
   background-color: #cccccc;
   border-radius: 3px 0 0 0;
   cursor: se-resize;
 }
 
-/* Define styles for the dragging state */
 .layout div .react-draggable-dragging {
   z-index: 9999;
   opacity: 0.5;
+}
+
+.datatable {
+  width: 100%;
+  border-collapse: collapse;
+  width: 100%;
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+  color: #fff;
+}
+
+.datatable th, .datatable td {
+  border: 1px solid #cccccc;
+  padding: 8px;
+  text-align: left;
+  background-color: #000;
+  color: #fff;
+}
+
+.datatable tr {
+  background-color: #000;
+  color: #fff;
+}
+
+.datatable tbody tr:hover {
+  cursor: pointer;
+}
+
+.datatable tbody tr:hover td {
+  color: #56c8ff;
+}
+
+.datatable tbody tr[data-selected="true"] td {
+  color: #56c8ff;
 }

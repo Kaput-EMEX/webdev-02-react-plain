@@ -1,0 +1,99 @@
+.vfill {
+    height: 100%;
+}
+
+.hfill {
+    width: 100%;
+}
+
+.hbox {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.hbox-compact {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    align-items: flex-start;
+}
+
+.vbox {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.vbox-compact {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    align-items: flex-start;
+}
+
+.fill {
+    flex: 1;
+}
+
+.center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.dir-center {
+    display: flex;
+    align-items: center;
+}
+
+.spaced {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.stretched {
+    display: flex;
+    justify-content: stretch;
+    align-items: center;
+}
+
+.container {
+    width: 100%;
+    margin: 0 auto;
+}
+
+.box {
+    padding: 20px;
+    margin: 10px;
+}
+
+.description-container {
+    max-height: 72px;
+    overflow: scroll;
+    line-height: 1.5;
+    padding-left: 24px;
+    border: 0px;
+    color: #fff;
+    background-color: #000;
+    border-left: 2px solid #56c8ff;
+}
+
+.data-container {
+    max-height: 72px;
+    overflow: scroll;
+    line-height: 1.5;
+    padding-left: 3px;
+    border: 0px;
+    color: #fff;
+    background-color: #000;
+    border-left: 2px solid #56c8ff;
+    outline: none;
+}
