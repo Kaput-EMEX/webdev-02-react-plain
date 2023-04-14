@@ -277,7 +277,7 @@ const Items = function ({ GET, POST, DELETE, PATCH, columns, fields }) {
 const Table = function ({ data, columns, selected, onRowClick, reload, remove, changeView, filterText, onFilterChange }) {
     return (
         <div class="hfill">
-            <div class="hbox-compact hfill dir-center datatable-buttons">
+            <div class="hbox-compact hfill dir-center buttons-bar">
                 <input type="search" class="" value={filterText} placeholder="Filter..." onChange={onFilterChange} />
                 <button onClick={reload}>Reload</button>
                 <button onClick={() => { remove(data[selected]) }}>Delete</button>
@@ -324,7 +324,7 @@ const ItemView = ({ item, fields, changeView, reloadTable, update }) => {
 
     return (
         <div className="hfill">
-            <div className="hbox-compact">
+            <div className="hbox-compact hfill dir-center buttons-bar">
                 <button onClick={() => { reloadTable(); changeView("table") }}>
                     Close
                 </button>
@@ -415,7 +415,7 @@ const ItemCreate = ({ fields, changeView, reloadTable, create }) => {
 
     return (
         <div className="hfill">
-            <div className="hbox-compact">
+            <div className="hbox-compact hfill dir-center buttons-bar">
                 <button onClick={() => { reloadTable(); changeView("table") }}>Close</button>
                 <button onClick={() => { create(item) }}>Save</button>
             </div>
