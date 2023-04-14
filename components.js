@@ -24,28 +24,111 @@ const ResponsiveGridLayout = WidthProvider(Responsive);
 const itemOptions = [
     {
         id: 1,
-        title: 'Applicants', selected: false,
+        title: "Applicants", selected: false,
         width: 2, height: 2,
-        content: function () { return (<Applicants />) }
+        content: function () {
+            return (
+                <Items
+                    GET={fetchApplicants} POST={postApplicant} DELETE={deleteApplicant} PATCH={patchApplicant}
+                    columns={[
+                        { name: "Name", key: "name" },
+                        { name: "Email", key: "email" },
+                        { name: "Resume", key: "resume" }
+                    ]}
+                    fields={[
+                        { label: "Name", name: "name", type: "text" },
+                        { label: "Email", name: "email", type: "text" },
+                        { label: "Resume", name: "resume", type: "text" }
+                    ]}
+                />)
+        }
     },
     {
         id: 2,
-        title: 'Companies', selected: false,
+        title: "Applications", selected: false,
         width: 2, height: 2,
-        content: function () { return (<Companies />) }
+        content: function () {
+            return (
+                <Items
+                    GET={fetchApplications} POST={postApplication} DELETE={deleteApplication} PATCH={patchApplication}
+                    columns={[
+                        { name: "Job", key: "job" },
+                        { name: "Text", key: "text" },
+                        { name: "Applicant", key: "applicant" }
+                    ]}
+                    fields={[
+                        { label: "Job", name: "job", type: "text" },
+                        { label: "Text", name: "text", type: "text" },
+                        { label: "Applicant", name: "applicant", type: "text" }
+                    ]}
+                />)
+        }
     },
     {
         id: 3,
-        title: 'Item 3', selected: false,
+        title: "Companies", selected: false,
         width: 2, height: 2,
-        content: function () { return <p>"hello world"</p> }
+        content: function () {
+            return (
+                <Items
+                    GET={fetchCompanies} POST={postCompany} DELETE={deleteCompany} PATCH={patchCompany}
+                    columns={[
+                        { name: "Company", key: "name" },
+                        { name: "Industry", key: "industry" },
+                        { name: "Description", key: "description" }
+                    ]}
+                    fields={[
+                        { label: "Name", name: "name", type: "text" },
+                        { label: "Industry", name: "industry", type: "text" },
+                        { label: "Description", name: "description", type: "textarea" },
+                        { label: "Size", name: "size", type: "number" }
+                    ]}
+                />)
+        }
     },
     {
         id: 4,
-        title: 'Item 4', selected: false,
+        title: "Employees", selected: false,
         width: 2, height: 2,
-        content: function () { return <p>"hello world"</p> }
-    }
+        content: function () {
+            return (
+                <Items
+                    GET={fetchEmployees} POST={postEmployee} DELETE={deleteEmployee} PATCH={patchEmployee}
+                    columns={[
+                        { name: "Name", key: "name" },
+                        { name: "Email", key: "email" },
+                        { name: "Company", key: "company" }
+                    ]}
+                    fields={[
+                        { label: "Name", name: "name", type: "text" },
+                        { label: "Email", name: "email", type: "text" },
+                        { label: "Company", name: "company", type: "text" },
+                        { label: "Role", name: "role", type: "text" }
+                    ]}
+                />)
+        }
+    },
+    {
+        id: 5,
+        title: "Recruiters", selected: false,
+        width: 2, height: 2,
+        content: function () {
+            return (
+                <Items
+                    GET={fetchRecruiters} POST={postRecruiter} DELETE={deleteRecruiter} PATCH={patchRecruiter}
+                    columns={[
+                        { name: "Name", key: "name" },
+                        { name: "Email", key: "email" },
+                        { name: "Company", key: "company" }
+                    ]}
+                    fields={[
+                        { label: "Name", name: "name", type: "text" },
+                        { label: "Email", name: "email", type: "text" },
+                        { label: "Company", name: "company", type: "text" }
+                    ]}
+                />)
+        }
+    },
 ];
 
 var activeItems = []
@@ -78,59 +161,145 @@ const Sidebar = function ({ addItem, removeItem }) {
     );
 };
 
-const Applicants = function () {
+const Items = function ({ GET, POST, DELETE, PATCH, columns, fields }) {
     // https://ultimatecourses.com/blog/using-async-await-inside-react-use-effect-hook
-    const [applicants, setApplicants] = useState([]);
+    const [items, setItems] = useState([]);
+    const [selectedIx, setSelectedIx] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [filterText, setFilterText] = useState("");
+    const [view, setView] = useState("table");
 
     useEffect(() => {
-        fetchApplicants().then((applicants) => {
-            setApplicants(applicants);
+        GET({ cache: "no-store" }).then((items) => {
+            setItems(items);
             setLoading(false);
         });
     }, []);
+
+    const onFilterChange = (event) => {
+        setFilterText(event.target.value);
+    };
+
+    const onRowClick = (index) => {
+        if (index === selectedIx) setSelectedIx(null);
+        else setSelectedIx(index);
+    };
+
+    const changeView = (view) => {
+        setView(view);
+    };
+
+    const reloadItems = async () => {
+        setLoading(true);
+        setSelectedIx(null);
+        await GET({ cache: "no-store" }).then((items) => {
+            setItems(items);
+        });
+        setLoading(false);
+    };
+
+    const postItem = async (item) => {
+        setLoading(true);
+        await POST(item);
+        setLoading(false);
+        reloadItems();
+    };
+
+    const deleteItem = async (item) => {
+        setLoading(true);
+        await DELETE(item);
+        setLoading(false);
+        reloadItems();
+    };
+
+    const patchItem = async (item) => {
+        var oldIx = selectedIx;
+        setLoading(true);
+        await PATCH(item);
+        setLoading(false);
+        reloadItems();
+        setSelectedIx(oldIx);
+    };
 
     if (loading) {
         return (<div><p>Loading...</p></div>);
     }
 
-    else if (applicants === undefined) {
+    else if (items === undefined) {
         return (<div><p>Server/Api Error</p></div>);
     }
 
-    else if (applicants.length === 0) {
+    else if (items.length === 0) {
         return (<div><p>Empty</p></div>);
     }
 
-    return (<div><p>{JSON.stringify(applicants)}</p></div>);
-};
+    if (view === "table") {
+        return (
+            <Table
+                data={items}
+                columns={columns}
+                selected={selectedIx}
+                onRowClick={onRowClick}
+                reload={reloadItems}
+                remove={deleteItem}
+                changeView={changeView}
+                onFilterChange={onFilterChange}
+                filterText={filterText}
+            />
+        );
+    }
 
-const CompanyTable = function ({ companies, selectedCompany, handleRowClick, handleReloadClick, changeView, handleInputChange, filterText }) {
+    if (view === "item") {
+        return (
+            <ItemView
+                item={items[selectedIx]}
+                fields={fields}
+                changeView={changeView}
+                reloadTable={reloadItems}
+                update={patchItem}
+            />
+        );
+    }
+
+    if (view === "create") {
+        return (
+            <ItemCreate
+                fields={fields}
+                changeView={changeView}
+                reloadTable={reloadItems}
+                create={postItem}
+            />
+        );
+    }
+}
+
+
+const Table = function ({ data, columns, selected, onRowClick, reload, remove, changeView, filterText, onFilterChange }) {
     return (
         <div class="hfill">
             <div class="hbox-compact hfill dir-center">
-                <input type="search" class="" value={filterText} placeholder="Filter..." onChange={handleInputChange} />
-                <button onClick={handleReloadClick}>Reload</button>
-                <button onClick={handleReloadClick}>New</button>
-                <button onClick={handleReloadClick}>Delete</button>
-                <button onClick={() => { if (selectedCompany !== null) changeView("item") }}>View/Edit</button>
+                <input type="search" class="" value={filterText} placeholder="Filter..." onChange={onFilterChange} />
+                <button onClick={reload}>Reload</button>
+                <button onClick={() => { remove(data[selected]) }}>Delete</button>
+                <button onClick={() => { if (selected !== null) changeView("item") }}>View/Edit</button>
+                <button onClick={() => { changeView("create") }}>New</button>
             </div>
             <br />
             <br />
             <table class="datatable">
                 <thead>
                     <tr>
-                        <th>Company</th>
-                        <th>Industry</th>
-                        <th>Description</th>
+                        {columns.map((column, index) => (
+                            <th key={index}>{column.name}</th>
+                        ))}
                     </tr>
                 </thead>
                 <tbody>
-                    {companies.map((company, index) => (
-                        <tr onClick={() => handleRowClick(index)} data-selected={selectedCompany == index}>
-                            <td>{company.name}</td>
-                            <td>{company.industry}</td>
-                            <td>{company.description}</td>
+                    {data.map((item, index) => (
+                        <tr onClick={() => onRowClick(index)} data-selected={selected == index} key={index}>
+                            {columns.map((column, index) => (
+                                <td key={index}>{item[column.key]}</td>
+                            ))}
                         </tr>
                     ))}
                 </tbody>
@@ -141,132 +310,109 @@ const CompanyTable = function ({ companies, selectedCompany, handleRowClick, han
     );
 };
 
-const CompanyView = function ({ company, changeView, reloadTable }) {
-    const [viewCompany, setViewCompany] = useState(company);
+const ItemView = ({ item, fields, changeView, reloadTable, update }) => {
+    const [viewItem, setViewItem] = useState(item);
     const [loading, setLoading] = useState(false);
 
     const handleInputChange = (event) => {
         const { name, value } = event.target;
-        setViewCompany(prevState => ({
+        setViewItem(prevState => ({
             ...prevState,
             [name]: value
         }));
     }
 
-    const handlePatchClick = () => {
-        setLoading(true);
-        patchCompany(viewCompany).then(() => {
-            setLoading(false);
-            reloadTable();
-            changeView("table");
-        });
-    };
-
-    const handleDeleteClick = () => {
-        setLoading(true);
-        deleteCompany(viewCompany).then(() => {
-            setLoading(false);
-            reloadTable();
-            changeView("table");
-        });
-    };
-
     return (
-        <div class="hfill">
-            <div class="hbox-compacthandlePostClick-cPostr">
+        <div className="hfill">
+            <div className="hbox-compact">
                 <button onClick={() => { reloadTable(); changeView("table") }}>Close</button>
-                <button onClick={handlePatchClick}>Patch</button>
-                <button onClick={handleDeleteClick}>Delete</button>
+                <button onClick={() => { update(viewItem) }}>Update</button>
             </div>
             <br /><br />
-            <div class="acc-text">Name:</div>
-            <span class="data-container hfill">{viewCompany.name}</span>
-            <br /><br />
-            <div class="acc-text">Industry:</div>
-            <input name="industry" class="data-container hfill" value={viewCompany.industry} onChange={handleInputChange} />
-            <br /><br />
-            <div class="acc-text">Description:</div>
-            <textarea name="description" class="data-container hfill" value={viewCompany.description} onChange={handleInputChange}>
-            </textarea>
-            <br /><br />
-            <div class="acc-text">Size:</div>
-            <input name="size" type="number" class="data-container hfill" value={viewCompany.size} onChange={handleInputChange} />
+            {fields.map((field) => (
+                <div key={field.label}>
+                    <div className="acc-text">{field.label}:</div>
+                    {field.type === "text" && (
+                        <input
+                            name={field.name}
+                            className="data-container hfill"
+                            value={viewItem[field.name]}
+                            onChange={handleInputChange}
+                        />
+                    )}
+                    {field.type === "textarea" && (
+                        <textarea
+                            name={field.name}
+                            className="data-container hfill"
+                            value={viewItem[field.name]}
+                            onChange={handleInputChange}
+                        />
+                    )}
+                    {field.type === "number" && (
+                        <input
+                            name={field.name}
+                            type="number"
+                            className="data-container hfill"
+                            value={viewItem[field.name]}
+                            onChange={handleInputChange}
+                        />
+                    )}
+                </div>
+            ))}
         </div>
     );
 };
 
-const Companies = function () {
-    // https://ultimatecourses.com/blog/using-async-await-inside-react-use-effect-hook
-    const [companies, setCompanies] = useState([]);
-    const [selectedCompany, setSelectedCompany] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [filterText, setFilterText] = useState("");
-    const [reload, setReload] = useState(false);
-    const [view, setView] = useState("table");
-
-    useEffect(() => {
-        fetchCompanies().then((companies) => {
-            setCompanies(companies);
-            setLoading(false);
-        });
-    }, [reload]);
+const ItemCreate = ({ fields, changeView, reloadTable, create }) => {
+    const [item, setItem] = useState({});
+    const [loading, setLoading] = useState(false);
 
     const handleInputChange = (event) => {
-        setFilterText(event.target.value);
-    };
-
-
-    const handleRowClick = (index) => {
-        if (index === selectedCompany) setSelectedCompany(null);
-        else setSelectedCompany(index);
-    };
-
-    const handleReloadClick = () => {
-        setLoading(true);
-        setSelectedCompany(null);
-        fetchCompanies({ cache: "no-store" }).then((companies) => {
-            setCompanies(companies);
-            setLoading(false);
-        });
-    };
-
-    const changeView = (view) => {
-        setView(view);
-    };
-
-    if (loading) {
-        return (<div><p>Loading...</p></div>);
+        const { name, value } = event.target;
+        setItem(prevState => ({
+            ...prevState,
+            [name]: value
+        }));
     }
 
-    else if (companies === undefined) {
-        return (<div><p>Server/Api Error</p></div>);
-    }
+    return (
+        <div className="hfill">
+            <div className="hbox-compact">
+                <button onClick={() => { reloadTable(); changeView("table") }}>Close</button>
+                <button onClick={() => { create(item) }}>Save</button>
+            </div>
+            <br /><br />
+            {fields.map((field) => (
+                <div key={field.label}>
+                    <div className="acc-text">{field.label}:</div>
+                    {field.type === "text" && (
+                        <input
+                            name={field.name}
+                            className="data-container hfill"
+                            value={item[field.name]}
+                            onChange={handleInputChange}
+                        />
+                    )}
+                    {field.type === "textarea" && (
+                        <textarea
+                            name={field.name}
+                            className="data-container hfill"
+                            value={item[field.name]}
+                            onChange={handleInputChange}
+                        />
+                    )}
+                    {field.type === "number" && (
+                        <input
+                            name={field.name}
+                            type="number"
+                            className="data-container hfill"
+                            value={item[field.name]}
+                            onChange={handleInputChange}
+                        />
+                    )}
+                </div>
+            ))}
+        </div>
+    );
+};
 
-    else if (companies.length === 0) {
-        return (<div><p>Empty</p></div>);
-    }
-
-    if (view === "table") {
-        return (
-            <CompanyTable
-                companies={companies}
-                selectedCompany={selectedCompany}
-                handleRowClick={handleRowClick}
-                handleReloadClick={handleReloadClick}
-                changeView={changeView}
-                handleInputChange={handleInputChange}
-                filterText={filterText}
-            />
-        );
-    }
-
-    if (view === "item") {
-        return (
-            <CompanyView
-                company={companies[selectedCompany]}
-                changeView={changeView}
-                reloadTable={handleReloadClick}
-            />
-        );
-    }
-}
