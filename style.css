@@ -121,7 +121,7 @@ body {
   opacity: 0.5;
 }
 
-.datatable-buttons {
+.buttons-bar{
   background: #000;
   position: sticky;
   top: 0;
