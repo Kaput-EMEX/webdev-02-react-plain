@@ -26,10 +26,10 @@ const App = () => {
             <Sidebar addItem={handleAddItem} removeItem={handleRemoveItem} />
             <ResponsiveGridLayout
                 className="layout"
-                style={{ height: '100%' }}
+                style={{ height: "100%", width: "100%" }}
                 rowHeight={100}
                 breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
-                cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}
+                cols={{ lg: 6, md: 6, sm: 6, xs: 6, xxs: 6 }}
                 isResizable={true}
                 verticalCompact={true}
                 draggableHandle=".window-bar"
