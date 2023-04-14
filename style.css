@@ -98,10 +98,10 @@ body {
 }
 
 .window-content {
-  width: 100%;
-  height: 100%;
+  width: calc(100% - 24px);
+  height: calc(100% - 24px);
   overflow: scroll;
-  padding: 12px;
+  margin: 12px;
 }
 
 .layout div .react-resizable-handle {
@@ -121,6 +121,13 @@ body {
   opacity: 0.5;
 }
 
+.datatable-buttons {
+  background: #000;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
 .datatable {
   width: 100%;
   border-collapse: collapse;
@@ -128,6 +135,7 @@ body {
   font-family: Arial, sans-serif;
   font-size: 14px;
   color: #fff;
+  overflow: scroll;
 }
 
 .datatable th, .datatable td {
