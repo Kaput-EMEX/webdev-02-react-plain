@@ -277,7 +277,7 @@ const Items = function ({ GET, POST, DELETE, PATCH, columns, fields }) {
 const Table = function ({ data, columns, selected, onRowClick, reload, remove, changeView, filterText, onFilterChange }) {
     return (
         <div class="hfill">
-            <div class="hbox-compact hfill dir-center">
+            <div class="hbox-compact hfill dir-center datatable-buttons">
                 <input type="search" class="" value={filterText} placeholder="Filter..." onChange={onFilterChange} />
                 <button onClick={reload}>Reload</button>
                 <button onClick={() => { remove(data[selected]) }}>Delete</button>
@@ -316,21 +316,26 @@ const ItemView = ({ item, fields, changeView, reloadTable, update }) => {
 
     const handleInputChange = (event) => {
         const { name, value } = event.target;
-        setViewItem(prevState => ({
+        setViewItem((prevState) => ({
             ...prevState,
-            [name]: value
+            [name]: value,
         }));
-    }
+    };
 
     return (
         <div className="hfill">
             <div className="hbox-compact">
-                <button onClick={() => { reloadTable(); changeView("table") }}>Close</button>
+                <button onClick={() => { reloadTable(); changeView("table") }}>
+                    Close
+                </button>
                 <button onClick={() => { update(viewItem) }}>Update</button>
             </div>
-            <br /><br />
+            <br />
+            <br />
+            <h3>Editable:</h3>
+            <hr />
             {fields.map((field) => (
-                <div key={field.label}>
+                <div>
                     <div className="acc-text">{field.label}:</div>
                     {field.type === "text" && (
                         <input
@@ -357,11 +362,44 @@ const ItemView = ({ item, fields, changeView, reloadTable, update }) => {
                             onChange={handleInputChange}
                         />
                     )}
+                    <br />
+                    <br />
                 </div>
             ))}
+            <h3>Static:</h3>
+            <hr />
+            {Object.entries(viewItem).map(([key, value]) => {
+                if (!fields.find((field) => field.name === key)) {
+                    if (Array.isArray(value)) {
+                        return (
+                            <div>
+                                <div class="acc-text">{key}:</div>
+                                <ul>
+                                    {value.map((val, index) => (
+                                        <li key={index}>{val}</li>
+                                    ))}
+                                </ul>
+                                <br />
+                                <br />
+                            </div>
+                        );
+                    } else {
+                        return (
+                            <div>
+                                <div class="acc-text">{key}:</div>
+                                <div class="data-container hfill">{value}</div>
+                                <br />
+                                <br />
+                            </div>
+                        );
+                    }
+                }
+                return null;
+            })}
         </div>
     );
 };
+
 
 const ItemCreate = ({ fields, changeView, reloadTable, create }) => {
     const [item, setItem] = useState({});
