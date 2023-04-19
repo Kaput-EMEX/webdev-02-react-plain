@@ -1,4 +1,6 @@
 1 job, review, vacancy
-2 requiredFields from json api
-3 Everything is editable + editable list
+2 requiredFields from json api (maybe)
+3 everything is editable + editable list
 4 hide urls use ids, add ids as first of each table
+5 add search window for id (dropbox[entity])(input[id]), open (view/edit)
+6 test without serve
