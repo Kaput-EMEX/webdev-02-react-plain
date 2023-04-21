@@ -4,6 +4,7 @@ const API = "https://groep35.webdev.ilabt.imec.be/"
 
 async function fetchApplicants() {
     var result = await apiTravelCollectionData(["applicants"], "applicants");
+    result = await apiArrayFetchNestedArrayNested(["applications"], result);
     return result;
 }
 
@@ -27,6 +28,7 @@ async function deleteApplicant(applicant) {
 
 async function fetchApplications() {
     var result = await apiTravelCollectionData(["applications"], "applications");
+    result = await apiArrayFetchNested(["job", "applicant"], result);
     return result;
 }
 
@@ -50,6 +52,7 @@ async function deleteApplication(application) {
 
 async function fetchCompanies() {
     var result = await apiTravelCollectionData(["companies"], "companies");
+    result = await apiArrayFetchNestedArrayNested(["jobs", "reviews", "employees"], result);
     return result;
 }
 
@@ -73,6 +76,7 @@ async function deleteCompany(company) {
 
 async function fetchEmployees() {
     var result = await apiTravelCollectionData(["employees"], "employees");
+    result = await apiArrayFetchNested(["company"], result);
     return result;
 }
 
@@ -96,6 +100,8 @@ async function deleteEmployee(employee) {
 
 async function fetchRecruiters() {
     var result = await apiTravelCollectionData(["recruiters"], "recruiters");
+    result = await apiArrayFetchNested(["company"], result);
+    result = await apiArrayFetchNestedArrayNested(["jobs"], result);
     return result;
 }
 
@@ -112,6 +118,30 @@ async function patchRecruiter(recruiter) {
 
 async function deleteRecruiter(recruiter) {
     var data = await apiDeleteResource(recruiter, recruiter.url);
+    return data;
+}
+
+
+
+async function fetchReviews() {
+    var result = await apiTravelCollectionData(["reviews"], "reviews");
+    result = await apiArrayFetchNested(["company"], result);
+    return result;
+}
+
+async function postReview(review) {
+    var destination = await apiTravelUrl(["reviews"]);
+    var data = await apiPostResource(review, destination);
+    return data;
+}
+
+async function patchReview(review) {
+    var data = await apiPatchResource(review, review.url);
+    return data;
+}
+
+async function deleteReview(review) {
+    var data = await apiDeleteResource(review, review.url);
     return data;
 }
 
@@ -184,6 +214,44 @@ async function apiTravelCollectionData(checkpoints, collection) {
 
         console.log(items);
         return items;
+    } catch (error) {
+        console.error(error);
+        return undefined;
+    }
+}
+
+async function apiArrayFetchNested(parameters, objects) {
+    try {
+        for(let object of objects) {
+            for(let parameter of parameters) {
+                console.log(object[parameter]);
+                let response = await fetch(object[parameter]);
+                object[parameter] = await response.json();
+            }
+        }
+
+        return objects;
+    } catch (error) {
+        console.error(error);
+        return undefined;
+    }
+}
+
+async function apiArrayFetchNestedArrayNested(parameters, objects) {
+    try {
+        for(let object of objects) {
+            for(let parameter of parameters) {
+                let i = 0;
+                while(i < object[parameter].length) {
+                    console.log(object[parameter][i]);
+                    let response = await fetch(object[parameter][i]);
+                    object[parameter][i] = await response.json();
+                    i++;
+                }
+            }
+        }
+
+        return objects;
     } catch (error) {
         console.error(error);
         return undefined;
