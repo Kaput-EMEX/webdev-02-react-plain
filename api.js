@@ -25,6 +25,11 @@ async function deleteApplicant(applicant) {
     return data;
 }
 
+async function getApplicantRequiredFields() {
+    var result = await apiTravelData(["applicants"]);
+    return result.requiredFields;
+}
+
 
 
 async function fetchApplications() {
@@ -48,6 +53,11 @@ async function patchApplication(application) {
 async function deleteApplication(application) {
     var data = await apiDeleteResource(application, application.url);
     return data;
+}
+
+async function getApplicationRequiredFields() {
+    var result = await apiTravelData(["applications"]);
+    return result.requiredFields;
 }
 
 
@@ -76,6 +86,12 @@ async function deleteCompany(company) {
     return data;
 }
 
+async function getCompanyRequiredFields() {
+    var result = await apiTravelData(["companies"]);
+    return result.requiredFields;
+}
+
+
 
 
 async function fetchEmployees() {
@@ -99,6 +115,11 @@ async function patchEmployee(employee) {
 async function deleteEmployee(employee) {
     var data = await apiDeleteResource(employee, employee.url);
     return data;
+}
+
+async function getEmployeeRequiredFields() {
+    var result = await apiTravelData(["employees"]);
+    return result.requiredFields;
 }
 
 
@@ -128,6 +149,11 @@ async function deleteRecruiter(recruiter) {
     return data;
 }
 
+async function getRecruiterRequiredFields() {
+    var result = await apiTravelData(["recruiters"]);
+    return result.requiredFields;
+}
+
 
 
 async function fetchReviews() {
@@ -152,6 +178,12 @@ async function deleteReview(review) {
     var data = await apiDeleteResource(review, review.url);
     return data;
 }
+
+async function getReviewsRequiredFields() {
+    var result = await apiTravelData(["employees"]);
+    return result.requiredFields;
+}
+
 
 
 

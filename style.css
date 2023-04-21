@@ -28,6 +28,11 @@ button:hover {
   cursor: pointer;
 }
 
+button:disabled {
+  color: red;
+  border: 1px solid red;
+}
+
 .acc-text {
   color: #56c8ff;
   font-weight: bold;

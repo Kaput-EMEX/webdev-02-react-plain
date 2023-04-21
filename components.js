@@ -44,6 +44,7 @@ const itemOptions = [
                         { name: "Email", key: ["email"] },
                         { name: "Resume", key: ["resume"] }
                     ]}
+                    getRequiredFields={getApplicantRequiredFields}
                     fields={[
                         { label: "Name", key: ["name"], type: "text" },
                         { label: "Email", key: ["email"], type: "text" },
@@ -52,6 +53,12 @@ const itemOptions = [
                     ]}
                     otherFields={[
                         { label: "Applications", key: ["applications", "text"], type: "object-array" }
+                    ]}
+                    createFields={[
+                        { label: "Name", key: ["name"], type: "text" },
+                        { label: "Email", key: ["email"], type: "text" },
+                        { label: "Resume", key: ["resume"], type: "text" },
+                        { label: "Skills", key: ["skills"], type: "array" }
                     ]}
                 />)
         }
@@ -69,12 +76,18 @@ const itemOptions = [
                         { name: "Text", key: ["text"] },
                         { name: "Applicant", key: ["applicant", "name"] }
                     ]}
+                    getRequiredFields={getApplicationRequiredFields}
                     fields={[
                         { label: "Text", key: ["text"], type: "text" }
                     ]}
                     otherFields={[
                         { label: "Applicant", key: ["applicant", "name"], type: "text" },
                         { label: "Job", key: ["job", "description"], type: "textarea" }
+                    ]}
+                    createFields={[
+                        { label: "Text", key: ["text"], type: "textarea" },
+                        { label: "Job", key: ["job"], type: "text" },
+                        { label: "Applicant", key: ["applicant"], type: "text" }
                     ]}
                 />)
         }
@@ -92,6 +105,7 @@ const itemOptions = [
                         { name: "Industry", key: ["industry"] },
                         { name: "Description", key: ["description"] }
                     ]}
+                    getRequiredFields={getCompanyRequiredFields}
                     fields={[
                         { label: "Name", key: ["name"], type: "text" },
                         { label: "Industry", key: ["industry"], type: "text" },
@@ -102,6 +116,12 @@ const itemOptions = [
                         { label: "Jobs", key: ["jobs", "description"], type: "object-array" },
                         { label: "Reviews", key: ["reviews", "text"], type: "object-array" },
                         { label: "Employees", key: ["employees", "name"], type: "object-array" }
+                    ]}
+                    createFields={[
+                        { label: "Name", key: ["name"], type: "text" },
+                        { label: "Industry", key: ["industry"], type: "text" },
+                        { label: "Description", key: ["description"], type: "textarea" },
+                        { label: "Size", key: ["size"], type: "number" }
                     ]}
                 />)
         }
@@ -120,6 +140,7 @@ const itemOptions = [
                         { name: "Role", key: ["role"] },
                         { name: "Company", key: ["company", "name"] }
                     ]}
+                    getRequiredFields={getEmployeeRequiredFields}
                     fields={[
                         { label: "Name", key: ["name"], type: "text" },
                         { label: "Email", key: ["email"], type: "text" },
@@ -127,6 +148,12 @@ const itemOptions = [
                     ]}
                     otherFields={[
                         { label: "Company", key: ["company", "name"], type: "text" }
+                    ]}
+                    createFields={[
+                        { label: "Name", key: ["name"], type: "text" },
+                        { label: "Email", key: ["email"], type: "text" },
+                        { label: "Role", key: ["role"], type: "text" },
+                        { label: "Company", key: ["company"], type: "text" }
                     ]}
                 />)
         }
@@ -144,6 +171,7 @@ const itemOptions = [
                         { name: "Email", key: ["email"] },
                         { name: "Company", key: ["company", "name"] }
                     ]}
+                    getRequiredFields={getRecruiterRequiredFields}
                     fields={[
                         { label: "Name", key: ["name"], type: "text" },
                         { label: "Email", key: ["email"], type: "text" }
@@ -151,6 +179,11 @@ const itemOptions = [
                     otherFields={[
                         { label: "Company", key: ["company", "name"], type: "text" },
                         { label: "Jobs", key: ["jobs", "description"], type: "object-array" }
+                    ]}
+                    createFields={[
+                        { label: "Name", key: ["name"], type: "text" },
+                        { label: "Email", key: ["email"], type: "text" },
+                        { label: "Company", key: ["company"], type: "text" }
                     ]}
                 />)
         }
@@ -168,12 +201,19 @@ const itemOptions = [
                         { name: "Score", key: ["score"] },
                         { name: "Text", key: ["text"] }
                     ]}
+                    getRequiredFields={getReviewsRequiredFields}
                     fields={[
-                        { label: "Text", key: ["text"], type: "text" },
+                        { label: "Text", key: ["text"], type: "textarea" },
                         { label: "Score", key: ["score"], type: "number" }
                     ]}
                     otherFields={[
                         { label: "Company", key: ["company", "name"], type: "text" },
+                    ]}
+                    createFields={[
+                        { label: "Text", key: ["text"], type: "textarea" },
+                        { label: "Score", key: ["score"], type: "number" },
+                        { label: "Company", key: ["company"], type: "text" },
+                        { label: "Employee", key: ["employee"], type: "text" }
                     ]}
                 />)
         }
@@ -210,17 +250,21 @@ const Sidebar = function ({ addItem, removeItem }) {
     );
 };
 
-const Items = function ({ GET, POST, DELETE, PATCH, columns, fields, otherFields }) {
+const Items = function ({ GET, POST, DELETE, PATCH, columns, getRequiredFields, fields, otherFields, createFields }) {
     // https://ultimatecourses.com/blog/using-async-await-inside-react-use-effect-hook
     const [items, setItems] = useState([]);
     const [selectedIx, setSelectedIx] = useState(null);
     const [loading, setLoading] = useState(true);
     const [filterText, setFilterText] = useState("");
     const [view, setView] = useState("table");
+    const [requiredFields, setRequiredFields] = useState([]);
 
     useEffect(() => {
         GET({ cache: "no-store" }).then((items) => {
             setItems(items);
+            getRequiredFields({ cache: "no-store" }).then((fields) => {
+                setRequiredFields(fields)
+            });
             setLoading(false);
         });
     }, []);
@@ -278,10 +322,6 @@ const Items = function ({ GET, POST, DELETE, PATCH, columns, fields, otherFields
         return (<div><p>Server/Api Error</p></div>);
     }
 
-    else if (items.length === 0) {
-        return (<div><p>Empty</p></div>);
-    }
-
     if (view === "table") {
         return (
             <Table
@@ -314,7 +354,8 @@ const Items = function ({ GET, POST, DELETE, PATCH, columns, fields, otherFields
     if (view === "create") {
         return (
             <ItemCreate
-                fields={fields}
+                fields={createFields}
+                requiredFields={requiredFields}
                 changeView={changeView}
                 reloadTable={reloadItems}
                 create={postItem}
@@ -530,53 +571,129 @@ const ItemView = ({ item, fields, otherFields, changeView, reloadTable, update }
 };
 
 
-const ItemCreate = ({ fields, changeView, reloadTable, create }) => {
-    const [item, setItem] = useState({});
-    const [loading, setLoading] = useState(false);
+const ItemCreate = ({ fields, requiredFields, changeView, reloadTable, create }) => {
+    const [viewItem, setViewItem] = useState({});
+    const [canCreate, setCanCreate] = useState(false);
 
     const handleInputChange = (event) => {
         const { name, value } = event.target;
-        setItem(prevState => ({
+        setViewItem((prevState) => ({
             ...prevState,
-            [name]: value
+            [name]: value,
         }));
-    }
+    };
+
+    const handleArrayChange = (event, index) => {
+        const { name, value } = event.target;
+        setViewItem((prevState) => {
+            const newValue = [...prevState[name]];
+            newValue[index] = value;
+            return {
+                ...prevState,
+                [name]: newValue,
+            };
+        });
+    };
+
+    const handleAddElement = (name) => {
+        setViewItem((prevState) => {
+            const newValue = [...prevState[name], ""];
+            return {
+                ...prevState,
+                [name]: newValue,
+            };
+        });
+    };
+
+    const handleDeleteElement = (name, index) => {
+        setViewItem((prevState) => {
+            const newValue = [...prevState[name]];
+            newValue.splice(index, 1);
+            return {
+                ...prevState,
+                [name]: newValue,
+            };
+        });
+    };
+
+    useEffect(() => {
+        let canCreateValue = true;
+        for (let i = 0; i < requiredFields.length; i++) {
+            const field = requiredFields[i];
+            if (!viewItem[field]) {
+                canCreateValue = false;
+                break;
+            }
+        }
+        setCanCreate(canCreateValue);
+    }, [viewItem]);
+
 
     return (
         <div className="hfill">
             <div className="hbox-compact hfill dir-center buttons-bar">
-                <button onClick={() => { reloadTable(); changeView("table") }}>Close</button>
-                <button onClick={() => { create(item) }}>Save</button>
+                <button onClick={() => { reloadTable(); changeView("table") }}>
+                    Close
+                </button>
+                <button onClick={() => { create(viewItem) }} disabled={!canCreate}>Create</button>
             </div>
-            <br /><br />
+            <br />
+            <br />
+            <h3>Editable:</h3>
+            <hr />
             {fields.map((field) => (
-                <div key={field.label}>
-                    <div className="acc-text">{field.label}:</div>
+                <div>
+                    <div className="acc-text">
+                        {field.label}:
+                        {requiredFields.includes(field.key[0]) && (
+                            <span className=""> (required)</span>
+                        )}
+                    </div>
                     {field.type === "text" && (
                         <input
-                            name={field.name}
+                            name={field.key[0]}
                             className="data-container hfill"
-                            value={item[field.name]}
+                            value={getNestedValue(field.key, viewItem)}
                             onChange={handleInputChange}
                         />
                     )}
                     {field.type === "textarea" && (
                         <textarea
-                            name={field.name}
+                            name={field.key[0]}
                             className="data-container hfill"
-                            value={item[field.name]}
+                            value={getNestedValue(field.key, viewItem)}
                             onChange={handleInputChange}
                         />
                     )}
                     {field.type === "number" && (
                         <input
-                            name={field.name}
+                            name={field.key[0]}
                             type="number"
                             className="data-container hfill"
-                            value={item[field.name]}
+                            value={getNestedValue(field.key, viewItem)}
                             onChange={handleInputChange}
                         />
                     )}
+                    {field.type === "array" && (
+                        <div>
+                            {getNestedValue(field.key, viewItem).map((value, index) => (
+                                <div key={index} className="hbox">
+                                    <button className="list-button" onClick={() => handleDeleteElement(field.key[0], index)}>x</button>
+                                    <input
+                                        name={field.key[0]}
+                                        className="data-container hfill"
+                                        value={value}
+                                        onChange={(event) => handleArrayChange(event, index)}
+                                    />
+                                    <br />
+                                    <br />
+                                </div>
+                            ))}
+                            <button className="list-button" onClick={() => handleAddElement(field.key[0])}>+</button>
+                        </div>
+                    )}
+                    <br />
+                    <br />
                 </div>
             ))}
         </div>
