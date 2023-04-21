@@ -15,6 +15,7 @@ async function postApplicant(applicant) {
 }
 
 async function patchApplicant(applicant) {
+    applicant = restoreArrayUrls(["applications"], {...applicant});
     var data = await apiPatchResource(applicant, applicant.url);
     return data;
 }
@@ -39,6 +40,7 @@ async function postApplication(application) {
 }
 
 async function patchApplication(application) {
+    application = restoreUrls(["job", "applicant"], {...application});
     var data = await apiPatchResource(application, application.url);
     return data;
 }
@@ -63,6 +65,8 @@ async function postCompany(company) {
 }
 
 async function patchCompany(company) {
+    console.log(company);
+    company = restoreArrayUrls(["jobs", "reviews", "employees"], {...company});
     var data = await apiPatchResource(company, company.url);
     return data;
 }
@@ -87,6 +91,7 @@ async function postEmployee(employee) {
 }
 
 async function patchEmployee(employee) {
+    employee = restoreUrls(["company"], {...employee});
     var data = await apiPatchResource(employee, employee.url);
     return data;
 }
@@ -112,6 +117,8 @@ async function postRecruiter(recruiter) {
 }
 
 async function patchRecruiter(recruiter) {
+    recruiter = restoreUrls(["company"], {...recruiter});
+    recruiter = restoreArrayUrls(["jobs"], recruiter);
     var data = await apiPatchResource(recruiter, recruiter.url);
     return data;
 }
@@ -136,6 +143,7 @@ async function postReview(review) {
 }
 
 async function patchReview(review) {
+    review = restoreUrls(["company"], {...review});
     var data = await apiPatchResource(review, review.url);
     return data;
 }
@@ -144,6 +152,29 @@ async function deleteReview(review) {
     var data = await apiDeleteResource(review, review.url);
     return data;
 }
+
+
+
+function restoreArrayUrls(parameters, object) {
+    console.log(object);
+    for(let parameter of parameters) {
+        let i = 0;
+        while(i < object[parameter].length) {
+            object[parameter][i] = object[parameter][i].url;
+        }
+    }
+
+    return object;
+} 
+
+function restoreUrls(parameters, object) {
+    console.log(object);
+    for(let parameter of parameters) {
+        object[parameter] = object[parameter].url;
+    }
+
+    return object;
+} 
 
 
 

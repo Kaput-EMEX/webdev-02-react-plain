@@ -449,7 +449,7 @@ const ItemView = ({ item, fields, otherFields, changeView, reloadTable, update }
                         <div>
                             {getNestedValue(field.key, viewItem).map((value, index) => (
                                 <div key={index} className="hbox">
-                                    <button className="list-button" onClick={() => handleDeleteElement(field.name, index)}>x</button>
+                                    <button className="list-button" onClick={() => handleDeleteElement(field.key[0], index)}>x</button>
                                     <input
                                         name={field.key[0]}
                                         className="data-container hfill"
@@ -460,7 +460,7 @@ const ItemView = ({ item, fields, otherFields, changeView, reloadTable, update }
                                     <br />
                                 </div>
                             ))}
-                            <button className="list-button" onClick={() => handleAddElement(field.name)}>+</button>
+                            <button className="list-button" onClick={() => handleAddElement(field.key[0])}>+</button>
                         </div>
                     )}
                     <br />
