@@ -4,6 +4,7 @@ const API = "https://groep35.webdev.ilabt.imec.be/"
 
 async function fetchApplicants() {
     var result = await apiTravelCollectionData(["applicants"], "applicants");
+    result = await apiArrayFetchNestedArrayNested(["applications"], result);
     return result;
 }
 
@@ -14,6 +15,8 @@ async function postApplicant(applicant) {
 }
 
 async function patchApplicant(applicant) {
+    // applicant = restoreArrayUrls(["applications"], {...applicant});
+    delete applicant.applications;
     var data = await apiPatchResource(applicant, applicant.url);
     return data;
 }
@@ -23,10 +26,16 @@ async function deleteApplicant(applicant) {
     return data;
 }
 
+async function getApplicantRequiredFields() {
+    var result = await apiTravelData(["applicants"]);
+    return result.requiredFields;
+}
+
 
 
 async function fetchApplications() {
     var result = await apiTravelCollectionData(["applications"], "applications");
+    result = await apiArrayFetchNested(["job", "applicant"], result);
     return result;
 }
 
@@ -37,6 +46,7 @@ async function postApplication(application) {
 }
 
 async function patchApplication(application) {
+    application = restoreUrls(["job", "applicant"], {...application});
     var data = await apiPatchResource(application, application.url);
     return data;
 }
@@ -46,10 +56,16 @@ async function deleteApplication(application) {
     return data;
 }
 
+async function getApplicationRequiredFields() {
+    var result = await apiTravelData(["applications"]);
+    return result.requiredFields;
+}
+
 
 
 async function fetchCompanies() {
     var result = await apiTravelCollectionData(["companies"], "companies");
+    result = await apiArrayFetchNestedArrayNested(["jobs", "reviews", "employees"], result);
     return result;
 }
 
@@ -60,6 +76,10 @@ async function postCompany(company) {
 }
 
 async function patchCompany(company) {
+    // company = restoreArrayUrls(["jobs", "reviews", "employees"], {...company});
+    delete company.jobs;
+    delete company.reviews;
+    delete company.employees;
     var data = await apiPatchResource(company, company.url);
     return data;
 }
@@ -69,10 +89,17 @@ async function deleteCompany(company) {
     return data;
 }
 
+async function getCompanyRequiredFields() {
+    var result = await apiTravelData(["companies"]);
+    return result.requiredFields;
+}
+
+
 
 
 async function fetchEmployees() {
     var result = await apiTravelCollectionData(["employees"], "employees");
+    result = await apiArrayFetchNested(["company"], result);
     return result;
 }
 
@@ -83,6 +110,7 @@ async function postEmployee(employee) {
 }
 
 async function patchEmployee(employee) {
+    employee = restoreUrls(["company"], {...employee});
     var data = await apiPatchResource(employee, employee.url);
     return data;
 }
@@ -92,10 +120,17 @@ async function deleteEmployee(employee) {
     return data;
 }
 
+async function getEmployeeRequiredFields() {
+    var result = await apiTravelData(["employees"]);
+    return result.requiredFields;
+}
+
 
 
 async function fetchRecruiters() {
     var result = await apiTravelCollectionData(["recruiters"], "recruiters");
+    result = await apiArrayFetchNested(["company"], result);
+    result = await apiArrayFetchNestedArrayNested(["jobs"], result);
     return result;
 }
 
@@ -106,6 +141,9 @@ async function postRecruiter(recruiter) {
 }
 
 async function patchRecruiter(recruiter) {
+    recruiter = restoreUrls(["company"], {...recruiter});
+    // recruiter = restoreArrayUrls(["jobs"], recruiter);
+    delete companycompany.jobs;// problem
     var data = await apiPatchResource(recruiter, recruiter.url);
     return data;
 }
@@ -114,6 +152,65 @@ async function deleteRecruiter(recruiter) {
     var data = await apiDeleteResource(recruiter, recruiter.url);
     return data;
 }
+
+async function getRecruiterRequiredFields() {
+    var result = await apiTravelData(["recruiters"]);
+    return result.requiredFields;
+}
+
+
+
+async function fetchReviews() {
+    var result = await apiTravelCollectionData(["reviews"], "reviews");
+    result = await apiArrayFetchNested(["company"], result);
+    return result;
+}
+
+async function postReview(review) {
+    var destination = await apiTravelUrl(["reviews"]);
+    var data = await apiPostResource(review, destination);
+    return data;
+}
+
+async function patchReview(review) {
+    review = restoreUrls(["company"], {...review});
+    var data = await apiPatchResource(review, review.url);
+    return data;
+}
+
+async function deleteReview(review) {
+    var data = await apiDeleteResource(review, review.url);
+    return data;
+}
+
+async function getReviewsRequiredFields() {
+    var result = await apiTravelData(["reviews"]);
+    return result.requiredFields;
+}
+
+
+
+
+function restoreArrayUrls(parameters, object) {
+    console.log(object);
+    for(let parameter of parameters) {
+        let i = 0;
+        while(i < object[parameter].length) {
+            object[parameter][i] = object[parameter][i].url;
+        }
+    }
+
+    return object;
+} 
+
+function restoreUrls(parameters, object) {
+    console.log(object);
+    for(let parameter of parameters) {
+        object[parameter] = object[parameter].url;
+    }
+
+    return object;
+} 
 
 
 
@@ -184,6 +281,44 @@ async function apiTravelCollectionData(checkpoints, collection) {
 
         console.log(items);
         return items;
+    } catch (error) {
+        console.error(error);
+        return undefined;
+    }
+}
+
+async function apiArrayFetchNested(parameters, objects) {
+    try {
+        for(let object of objects) {
+            for(let parameter of parameters) {
+                console.log(object[parameter]);
+                let response = await fetch(object[parameter]);
+                object[parameter] = await response.json();
+            }
+        }
+
+        return objects;
+    } catch (error) {
+        console.error(error);
+        return undefined;
+    }
+}
+
+async function apiArrayFetchNestedArrayNested(parameters, objects) {
+    try {
+        for(let object of objects) {
+            for(let parameter of parameters) {
+                let i = 0;
+                while(i < object[parameter].length) {
+                    console.log(object[parameter][i]);
+                    let response = await fetch(object[parameter][i]);
+                    object[parameter][i] = await response.json();
+                    i++;
+                }
+            }
+        }
+
+        return objects;
     } catch (error) {
         console.error(error);
         return undefined;

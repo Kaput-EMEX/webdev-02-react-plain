@@ -13,6 +13,26 @@ body {
   box-sizing: border-box;
 }
 
+
+button {
+  background-color: #000;
+  color: #fff;
+  border: 1px solid #56c8ff;
+  border-radius: 3px;
+  padding: 3px;
+  margin: 3px;
+}
+
+button:hover {
+  color: #56c8ff;
+  cursor: pointer;
+}
+
+button:disabled {
+  color: red;
+  border: 1px solid red;
+}
+
 .acc-text {
   color: #56c8ff;
   font-weight: bold;
@@ -136,6 +156,7 @@ body {
   font-size: 14px;
   color: #fff;
   overflow: scroll;
+  margin-bottom: 24px;
 }
 
 .datatable th, .datatable td {
@@ -161,4 +182,9 @@ body {
 
 .datatable tbody tr[data-selected="true"] td {
   color: #56c8ff;
+}
+
+.list-button {
+  width: 24px;
+  height: 24px;
 }
