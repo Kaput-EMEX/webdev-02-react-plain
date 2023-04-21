@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>React App</title>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+
+  <script src="./react.production.min.js"></script>
+  <script src="./react-dom.production.min.js"></script>
+
+  <link rel="stylesheet" href="./react-grid-style.css" />
+  <script src="./react-grid-layout.min.js"></script>
+
+  <script src="./babel.min.js"></script>
+
+  <link type="text/css" rel="stylesheet" href="./containers.css">
+  <link type="text/css" rel="stylesheet" href="./style.css">
+  <link type="text/css" rel="stylesheet" href="./style-grid.css">
+
+  <style>
+    body {
+      font-family: 'Inconsolata', monospace;
+      font-weight: 600;
+    }
+
+    a {
+      color: #fff;
+    }
+
+    a:hover {
+      color: #56c8ff
+    }
+
+    a::after {
+      content: "";
+      display: inline-block;
+      width: 0.3em;
+      height: 0.3em;
+      border-radius: 50%;
+      background-color: #56c8ff;
+      margin-left: 2px;
+      vertical-align: middle;
+    }
+
+    input, textarea {
+      font-weight: 600;
+    }
+    
+  </style>
+</head>
+
+<body>
+  <div id="root" class="hbox">
+  </div>
+
+  <script type="text/babel" src="./api.js"></script>
+  <script type="text/babel" src="./components.js"></script>
+  <script type="text/babel" src="./layout.js"></script>
+  <script type="text/babel" src="./app.js"></script>
+</body>
+
+</html>
