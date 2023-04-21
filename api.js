@@ -15,7 +15,8 @@ async function postApplicant(applicant) {
 }
 
 async function patchApplicant(applicant) {
-    applicant = restoreArrayUrls(["applications"], {...applicant});
+    // applicant = restoreArrayUrls(["applications"], {...applicant});
+    delete applicant.applications;
     var data = await apiPatchResource(applicant, applicant.url);
     return data;
 }
@@ -75,8 +76,10 @@ async function postCompany(company) {
 }
 
 async function patchCompany(company) {
-    console.log(company);
-    company = restoreArrayUrls(["jobs", "reviews", "employees"], {...company});
+    // company = restoreArrayUrls(["jobs", "reviews", "employees"], {...company});
+    delete company.jobs;
+    delete company.reviews;
+    delete company.employees;
     var data = await apiPatchResource(company, company.url);
     return data;
 }
@@ -139,7 +142,8 @@ async function postRecruiter(recruiter) {
 
 async function patchRecruiter(recruiter) {
     recruiter = restoreUrls(["company"], {...recruiter});
-    recruiter = restoreArrayUrls(["jobs"], recruiter);
+    // recruiter = restoreArrayUrls(["jobs"], recruiter);
+    delete companycompany.jobs;// problem
     var data = await apiPatchResource(recruiter, recruiter.url);
     return data;
 }
@@ -180,7 +184,7 @@ async function deleteReview(review) {
 }
 
 async function getReviewsRequiredFields() {
-    var result = await apiTravelData(["employees"]);
+    var result = await apiTravelData(["reviews"]);
     return result.requiredFields;
 }
 

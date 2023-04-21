@@ -156,6 +156,7 @@ button:disabled {
   font-size: 14px;
   color: #fff;
   overflow: scroll;
+  margin-bottom: 24px;
 }
 
 .datatable th, .datatable td {

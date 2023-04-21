@@ -366,10 +366,10 @@ const Items = function ({ GET, POST, DELETE, PATCH, columns, getRequiredFields, 
 
 
 const Table = function ({ data, columns, selected, onRowClick, reload, remove, changeView, filterText, onFilterChange }) {
+    //<input type="search" class="" value={filterText} placeholder="Filter..." onChange={onFilterChange} />
     return (
         <div class="hfill">
             <div class="hbox-compact hfill dir-center buttons-bar">
-                <input type="search" class="" value={filterText} placeholder="Filter..." onChange={onFilterChange} />
                 <button onClick={reload}>Reload</button>
                 <button onClick={() => { remove(data[selected]) }}>Delete</button>
                 <button onClick={() => { if (selected !== null) changeView("item") }}>View/Edit</button>
@@ -572,7 +572,19 @@ const ItemView = ({ item, fields, otherFields, changeView, reloadTable, update }
 
 
 const ItemCreate = ({ fields, requiredFields, changeView, reloadTable, create }) => {
-    const [viewItem, setViewItem] = useState({});
+    const getInitialViewItem = () => {
+        let initialValue = {};
+        fields.forEach((field) => {
+            if (field.type === "array") {
+                initialValue[field.key[0]] = [];
+            } else {
+                initialValue[field.key[0]] = "";
+            }
+        });
+        return initialValue;
+    };
+
+    const [viewItem, setViewItem] = useState(getInitialViewItem());
     const [canCreate, setCanCreate] = useState(false);
 
     const handleInputChange = (event) => {
